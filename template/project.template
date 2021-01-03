@@ -1,0 +1,171 @@
+<script id="template-project-menu" type="text/x-handlebars-template">
+  <div class="row" style="margin-top:10px;">
+  <div class="col-md-12">
+      <span style="float:right;"><input type="checkbox" class="class-double-buttons" data-size="small" data-on-text="PRIVATE" data-off-text="PUBLIC" {{#unless is_public}} checked {{/unless}}></span>
+    </div>
+  </div>
+  <div class="row" style="margin-top:10px;">
+    <div class="col-md-10">
+      <span id="project-title-label" style="display:none; font-weight:bold;">{{name}}</span>
+      <input type="text" class="form-control" id="project-title-input" placeholder="Title" style="display:inline;">
+    </div>
+    <div class="col-md-2">
+      <a href="#" id="project-title-button-update" style="display:none;float:right;" rel="project-title" onclick="javascript:updateProject(this);"><i class="fa fa-pencil-square-o"></i></a>
+      <a href="#" id="project-title-button-cancel" style="display:inline;float:right;" rel="project-title" onclick="javascript:updateProject(this);"><i class="fa fa-undo"></i></a>
+      <a href="#" id="project-title-button-save" style="display:inline;float:right;" rel="project-title" onclick="javascript:updateProject(this);"><i class="fa fa-check"></i></a>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-10">
+      <p id="project-description-label">{{description}}</p>
+      <textarea id="project-description-input" class="form-control" rows="5" placeholder="Project description ..." style="display:none;" ></textarea>
+    </div>
+    <div class="col-md-2">
+      <a href="#" id="project-description-button-update" style="display:inline;float:right;" rel="project-title" onclick="javascript:updateProject(this);"><i class="fa fa-pencil-square-o"></i></a>
+      <a href="#" id="project-description-button-cancel" style="display:none;float:right;" rel="project-title" onclick="javascript:updateProject(this);"><i class="fa fa-undo"></i></a>
+      <a href="#" id="project-description-button-save" style="display:none;float:right;" rel="project-title" onclick="javascript:updateProject(this);"><i class="fa fa-check"></i></a>
+    </div>
+  </div>
+  <div class="row" style="margin-top:30px;">
+    <div class="col-md-12">
+      <span>Users :</span>
+      <div style="height:150px;overflow:auto;">
+        <table class="table table-bordered" style="margin-top:3px;margin-right:10px;">
+          {{#each resource_list_users}}
+            <tr>
+              <td style="padding:0px;">{{this.name}}</td>
+              <td style="padding:0px 5px 0px 5px;width:10px;"><input type="checkbox" class="class-double-buttons" name="my-checkbox" data-size="small" data-on-text="ADMIN" data-off-text="?" {{#if this.is_admin_project}} checked {{/if}}></td>
+              <td style="padding:0px 5px 0px 5px;width:10px;"><input type="checkbox" class="class-double-buttons" name="my-checkbox" data-size="small" data-on-text="WRITE" data-off-text="READ" {{#if this.is_edit_project}} checked {{/if}}></td>
+              <td style="padding-top:0px;padding-bottom:5px; width:10px;"><a href="#" onclick="javascript:deleteProjectUser('"+{{this.href}}+"');"><i class="fa fa-trash-o"></i></a></td>
+            </tr>
+          {{/each}}
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="row" style="margin-top:30px;">
+    <div class="col-md-8">
+      <div class="input-group">
+        <input type="text" class="form-control" placeholder="Invite">
+        <span class="input-group-btn"><button class="btn btn-default" type="button"><i class="fa fa-send"></i></button></span>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-8">
+      <textarea class="form-control" rows="2" placeholder="Invite comment ..."></textarea>
+    </div>
+  </div>
+  <div class="row" style="margin-top:30px;">
+    <div class="col-md-12">
+      <span>Requests :</span>
+      <div style="height:150px;overflow:auto;">
+        <table class="table table-bordered" style="margin-top:3px;margin-right:10px;">
+          {{#each resource_list_requests}}
+            <tr>
+              <td style="display:block;"><span style="font-weight:bold;">{{this.name}}</span><p>{{this.comment}}</p></td>
+              <td style="display:none;">
+                <div class="input-group">
+                  <input type="text" class="form-control" placeholder="Invite">
+                  <span class="input-group-btn"><button class="btn btn-default" type="button"><i class="fa fa-send"></i></button></span>
+                </div>
+              </td>
+              <td style="width:60px;">
+                <a href="#" id="project-description-button-update" style="display:inline;float:right;" rel="project-title" onclick="javascript:deleteProjectUser('"+{{this.href}}+"');"><i class="fa fa-comment"></i></a>
+                <a href="#" id="project-description-button-cancel" style="display:inline;float:right;" rel="project-title" onclick="javascript:deleteProjectUser('"+{{this.href}}+"');"><i class="fa fa-thumbs-down"></i></a>
+                <a href="#" id="project-description-button-save" style="display:inline;float:right;" rel="project-title" onclick="javascript:deleteProjectUser('"+{{this.href}}+"');"><i class="fa fa-thumbs-up"></i></a>
+              </td>
+            </tr>
+          {{/each}}
+        </table>
+      </div>
+    </div>
+  </div>
+</script>
+
+<script id="template-project-content" type="text/x-handlebars-template">
+<div class="row" id="project-path">
+  <div class="col-md-5">
+    <div class="input-group">
+      <input type="text" class="form-control">
+      <span class="input-group-btn">
+        <button class="btn btn-default" type="button"><i class="fa fa-search"></i></button>
+      </span>
+    </div>
+  </div>
+  <div class="col-md-5 col-md-offset-1">
+    <input type="checkbox" class="class-double-buttons" data-on-text="ByDate" data-off-text="ByName" checked>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12" style="margin-top:30px;">
+    <ul class="nav nav-tabs" role="tablist" id="project-resource-nav-tabs">
+      <li class="active" id="project-resource-nav-tabs-formalism">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#" rel="formalism" onclick="javascript:showProjectNavTabResources(this);">Formalisms</a>
+      </li>
+      <li class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#" rel="model" onclick="javascript:showProjectNavTabResources(this);">Models</a>
+      </li>
+      <li class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#" rel="converter" onclick="javascript:showProjectNavTabResources(this);">Converters</a>
+      </li>
+      <li class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#" rel="service" onclick="javascript:showProjectNavTabResources(this);">Services</a>
+      </li>
+      <li class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#" rel="execution" onclick="javascript:showProjectNavTabResources(this);">Executions</a>
+      </li>
+      <li class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#" rel="scenario" onclick="javascript:showProjectNavTabResources(this);">Scenarios</a>
+      </li>
+    </ul>
+  </div>
+</div>
+<div class="row">
+  <div id="project-resource-list" class="col-md-12">
+
+  </div>
+</div>
+<script lang="javascript">
+  var resource_list = {"search_result": [
+                              {"title": "model 1","description":"Model description .... ... ... ... ...","href":"/users/rokysaroi","project" : "Projet 1","type" : "Model","color":"color-model","logo":false},
+                              {"title": "Formalism 1","description":"Formalism description .... ... ... ... ...","href":"/users/rokysaroi","project" : "User 1","type" : "Formalism","color":"color-formalism","logo":true},
+                              {"title": "Formalism 1","description":"Formalism description .... ... ... ... ...","href":"/users/rokysaroi","project" : "User 1","type" : "Formalism","color":"color-converter","logo":true},
+                              {"title": "Formalism 1","description":"Formalism description .... ... ... ... ...","href":"/users/rokysaroi","project" : "User 1","type" : "Formalism","color":"color-service","logo":true},
+                              {"title": "Formalism 1","description":"Formalism description .... ... ... ... ...","href":"/users/rokysaroi","project" : "User 1","type" : "Formalism","color":"color-execution","logo":true},
+                              {"title": "Formalism 1","description":"Formalism description .... ... ... ... ...","href":"/users/rokysaroi","project" : "User 1","type" : "Formalism","color":"color-scenario","logo":true},
+                              {"title": "model 1","description":"Model description .... ... ... ... ...","href":"/users/rokysaroi","project" : "Projet 1","type" : "Model","color":"color-project","logo":false},
+                              {"title": "model 1","description":"Model description .... ... ... ... ...","href":"/users/rokysaroi","project" : "Projet 1","type" : "Model","color":"color-model","logo":false},
+                              {"title": "model 1","description":"Model description .... ... ... ... ...","href":"/users/rokysaroi","project" : "Projet 1","type" : "Model","color":"color-model","logo":false},
+                              {"title": "model 1","description":"Model description .... ... ... ... ...","href":"/users/rokysaroi","project" : "Projet 1","type" : "Model","color":"color-model","logo":false},
+                              {"title": "model 1","description":"Model description .... ... ... ... ...","href":"/users/rokysaroi","project" : "Projet 1","type" : "Model","color":"color-model","logo":false},
+                              {"title": "model 1","description":"Model description .... ... ... ... ...","href":"/users/rokysaroi","project" : "Projet 1","type" : "Model","color":"color-model","logo":false},
+                              {"title": "Formalism 1","description":"Formalism description .... ... ... ... ...","href":"/users/rokysaroi","project" : "User 1","type" : "Formalism","color":"color-formalism","logo":true},
+                              {"title": "Formalism 1","description":"Formalism description .... ... ... ... ...","href":"/users/rokysaroi","project" : "User 1","type" : "Formalism","color":"color-formalism","logo":true}
+                        ]
+                      };
+  var source = $("#template-search-result").html();
+  template = Handlebars.compile(source);
+  $("#project-resource-list").html(template(resource_list));
+</script>
+</script>
+
+<script id="template-search-result" type="text/x-handlebars-template">
+{{#each search_result}}
+  <div class="{{color}}" style="width:23%; max-width:200px; min-width:150px; height:150px; margin-top:10px; margin-left:10px; padding:5px 5px 0px 5px; display:inline-block; color: inherit; border-radius: 6px;">
+    <div style="float:right;">
+      <a href="#" style="display:inline;" rel="project-title" onclick="javascript:deleteProjectUser('"+{{this.href}}+"');"><i class="fa fa-files-o"></i></a>
+      <a href="#" style="display:inline;" rel="project-title" onclick="javascript:deleteProjectUser('"+{{this.href}}+"');"><i class="fa fa-scissors"></i></a>
+      <a href="#" style="display:inline;" rel="project-title" onclick="javascript:deleteProjectUser('"+{{this.href}}+"');"><i class="fa fa-trash-o"></i></a>
+    </div>
+    <a href="#" onclick="javascript:showEditResource('"+{{this.href}}+"');">
+      <div style="width:100%;height:100%;">
+        <span><i {{#if logo}} class="fa fa-user" {{else}} class="fa fa-group" {{/if}}></i> <span>{{this.project}}</span></span>
+        <span style="display:block;margin-top:10px;font-weight:bold;">{{this.title}}</span>
+        <p style="margin-top:5px;">{{this.description}}</p>
+        <span style="display:block;margin-top:5px;float:right;">{{this.type}}</span>
+      </div>
+    </a>
+  </div>
+{{/each}}
+</script>
